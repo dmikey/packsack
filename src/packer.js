@@ -1,5 +1,6 @@
 const path = require('path');
 const { transformFromAst } = require("babel-core");
+const jsxPlugin = require('@syr/jsx')
 
 function buildModuleString(modules) {
   let additionalModules = '';
@@ -21,8 +22,8 @@ function transform(ast) {
   let returnBody;
   try {
     let { code } = transformFromAst(ast, null, {
-      presets: ["env"]
-      // minified: true
+      presets: ["env"],
+      plugins: [ [jsxPlugin.default, { "useVariables": true, "useGuid":true }] ]
     });
     returnBody = code;
   } catch (e) {
