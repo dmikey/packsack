@@ -52,6 +52,11 @@ function getDependencies(entryFileName, forParent) {
   try {
     entryData = fs.readFileSync(filePath, "utf-8");
 
+    // little crappy json loader ;-)
+    if(entryFileName.indexOf('json') > -1) {
+      entryData = `export default ${entryData}`;
+    }
+
     let ast = parseToAST(entryData);
 
     if(forParent) {

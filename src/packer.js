@@ -22,7 +22,7 @@ function transform(ast) {
   let returnBody;
   try {
     let { code } = transformFromAst(ast, null, {
-      presets: ["env"],
+      presets: [["env", { "loose": true, "browsers": [">0.25%", "not dead"] }]],
       plugins: [ [jsxPlugin.default, { "useVariables": true, "useGuid":true }] ]
     });
     returnBody = code;
