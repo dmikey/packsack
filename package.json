@@ -16,5 +16,8 @@
     "@syr/jsx": "^1.2.1",
     "babel-core": "^6.26.3",
     "babel-traverse": "^6.26.0"
+  },
+  "engines": {
+    "node": ">=8.9"
   }
 }
