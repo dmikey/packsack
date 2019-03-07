@@ -1,6 +1,11 @@
 #! /usr/bin/env node
-
 const bundle = require('./src/index')
-const entry = process.cwd() + '/src/index.js'
+const entryFileFromCWD = process.argv[2];
+const entry = `${process.cwd()}/${entryFileFromCWD}`;
+const output = process.argv[3];
 
-bundle(entry);
+if(output) {
+
+} else {
+  console.log(bundle(entry));
+}

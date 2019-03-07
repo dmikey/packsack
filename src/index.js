@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const babelParser = require("@babel/parser");
 const babelTraverse = require("babel-traverse");
+const { transformFromAst } = require("babel-core");
 
 /**
  * 
@@ -129,11 +130,56 @@ function parseTreeDeps(deps, entry) {
   }
 }
 
+function transform(sourceBody) {
+  let ast = babelParser.parse(sourceBody, {
+    sourceType: "module"
+  });
+
+  let { code } = transformFromAst(ast, null, {
+    presets: ["env"]  //applying the presets it means converting to es5 code
+  });
+
+  return code;
+}
+
 function pack(modules) {
   console.log('packing application');
   console.log(`${Object.keys(resolvedModules).length} total modules to pack.`)
   // pack all the modules into a specified output
-  return modules
+
+  let entryFile = path.parse(modules.filePath).base;
+  let entryData = fs.readFileSync(modules.filePath, "utf-8");
+  let code = transform(entryData);
+
+  let additionalModules = '';
+  modules.dependencies.forEach(module => {
+    let moduleData = fs.readFileSync(module.fileLocation, "utf-8");
+    let moduleCode = transform(moduleData);
+
+    additionalModules += `
+      "${module.file}" : function (module, exports, require) {
+        ${moduleCode}
+      },
+    `
+  });
+
+  let stringModules = `{
+    "${entryFile}" : function (module, exports, require) {
+      ${code}
+    },
+    ${additionalModules}
+  }`;
+
+  var result = `(function (modules) {
+    function require(name) {
+      const fn = modules[name];
+      const module={},exports={};
+      fn(module, exports,(name)=>require(name));
+      return exports;
+    }
+    require('${entryFile}');
+  })(${stringModules})`;
+  return result;
 }
 
 module.exports = entry => {
