@@ -32,7 +32,6 @@ function transform(ast) {
 }
 
 module.exports = (depTree) => {
-  console.log(`${Object.keys(depTree.cache).length} modules found`)
   console.log('packing modules');
   // pack all the modules into a specified output
   let mainPath = path.parse(depTree.filePath);

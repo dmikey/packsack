@@ -132,6 +132,7 @@ function parseTreeDeps(deps, entry) {
 }
 
 module.exports = (entry) => {
+  console.log('gathering modules');
   const depTree = {
     filePath: entry,
     dependencies: [],
