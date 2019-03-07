@@ -47,10 +47,15 @@ module.exports = (depTree) => {
   }`;
 
   var result = `(function (modules) {
+    const moduleCache = {};
     function require(name) {
+      if(moduleCache[name]) {
+        return moduleCache[name];
+      }
       const fn = modules[name];
       const module={},exports={};
       fn(module, exports,(name)=>require(name));
+      moduleCache[name] = exports
       return exports;
     }
     require('${mainPath.base}');
