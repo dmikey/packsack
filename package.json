@@ -1,5 +1,5 @@
 {
-  "name": "pack",
+  "name": "@syr/pack",
   "version": "1.0.0",
   "description": "pack syr applications, config free, and fast",
   "main": "src/index.js",
