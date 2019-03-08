@@ -4,7 +4,7 @@
   "description": "pack syr applications, config free, and fast",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "bin": {
     "syr-pack": "./cli.js"
@@ -19,5 +19,8 @@
   },
   "engines": {
     "node": ">=8.9"
+  },
+  "devDependencies": {
+    "mocha": "^6.0.2"
   }
 }
