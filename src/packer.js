@@ -1,21 +1,41 @@
 const path = require('path');
 const { transformFromAst } = require("babel-core");
-const jsxPlugin = require('@syr/jsx')
+const jsxPlugin = require('@syr/jsx');
 
-function buildModuleString(modules) {
-  let additionalModules = '';
-  Object.keys(modules).forEach(key => {
-    if(key != 'mainFileEntry') {
-      let module = modules[key];
-      let moduleCode = transform(module);
-      additionalModules += `
-        "${key}" : function (module, exports, require) {
-          ${moduleCode}
-        },
-      `
-    }
-  });
-  return additionalModules;
+function buildModuleMap(depTree, entryPath) {
+  let pathMap = depTree.pathMap;
+  let pathCache = depTree.pathCache;
+  let paths = Object.keys(pathCache);
+  let requireMap = {};
+  let modules = [];
+
+  for(let i = 0; i < paths.length; i++) {
+    let modulePath = paths[i];
+    pathCache[modulePath] = (modules.push(transform(pathCache[modulePath].ast)) - 1)
+  }
+
+  let requirePaths = Object.keys(pathMap);
+
+  for(let i = 0; i < requirePaths.length; i++) {
+    let requirePath = requirePaths[i];
+    let absolutePath = pathMap[requirePaths[i]];
+    let moduleIndex = pathCache[absolutePath];
+    let mapPath = i < 1 ?entryPath:requirePath;
+    requireMap[mapPath] = moduleIndex;
+  }
+
+  let moduleArrayString = '[';
+  for(let i = 0; i < modules.length; i++) {
+    moduleArrayString += `function (module, exports, require) {
+      ${modules[i]}
+    },`
+  }
+  moduleArrayString += ']';
+
+  return {
+    requireMap: JSON.stringify(requireMap),
+    moduleArray: moduleArrayString
+  }
 }
 
 function transform(ast) {
@@ -23,7 +43,8 @@ function transform(ast) {
   try {
     let { code } = transformFromAst(ast, null, {
       presets: [["env", { "loose": true, "browsers": [">0.25%", "not dead"] }]],
-      plugins: [ [jsxPlugin.default, { "useVariables": true, "useGuid":true }] ]
+      plugins: [ [jsxPlugin.default, { "useVariables": true, "useGuid":true }] ],
+      // minified: true
     });
     returnBody = code;
   } catch (e) {
@@ -36,29 +57,23 @@ module.exports = (depTree) => {
   console.log('packing modules');
   // pack all the modules into a specified output
   let mainPath = path.parse(depTree.filePath);
-  let code = transform(depTree.cache.mainFileEntry);
-  let additionalModules = buildModuleString(depTree.cache);
-
-  let stringModules = `{
-    "${mainPath.base}" : function (module, exports, require) {
-      ${code}
-    },
-    ${additionalModules}
-  }`;
+  let addModules = buildModuleMap(depTree, mainPath.base)
 
   var result = `(function (modules) {
     const moduleCache = {};
+    const requireMap = ${addModules.requireMap};
     function require(name) {
       if(moduleCache[name]) {
         return moduleCache[name];
       }
-      const fn = modules[name];
+      const fnlocation = requireMap[name];
+      const fn = modules[fnlocation];
       const module={},exports={};
       fn(module, exports,(name)=>require(name));
       moduleCache[name] = exports
       return exports;
     }
     require('${mainPath.base}');
-  })(${stringModules})`;
+   })(${addModules.moduleArray})`;
   return result;
 }

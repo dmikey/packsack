@@ -5,6 +5,8 @@ const babelTraverse = require("babel-traverse");
 
 let moduleCache = {};
 let resolvedModules = {};
+let pathCache = {};
+let pathMap = {};
 
 /**
  * Gathers the deps for a file, in relation to a parent or absolute entry
@@ -60,10 +62,14 @@ function getDependencies(entryFileName, forParent) {
     let ast = parseToAST(entryData);
 
     if(forParent) {
-      moduleCache[entryFileName] = ast;
+      moduleCache[entryFileName] = {ast:ast};
+
     } else {
-      moduleCache.mainFileEntry = ast;
+      moduleCache.mainFileEntry = {ast:ast};
     }
+
+    pathMap[entryFileName] = filePath;
+    pathCache[filePath] = {ast:ast};
 
     babelTraverse.default(ast, {
       ImportDeclaration: ({ node }) => {
@@ -124,6 +130,7 @@ function resolveLocation(toLocation, fromLocation) {
 
 function parseTreeDeps(deps, entry) {
   // track resolved modules for circular dep
+  // developer will get a callstack exceeded message
   if(resolvedModules[entry]) {
     return
   }
@@ -141,7 +148,9 @@ module.exports = (entry) => {
   const depTree = {
     filePath: entry,
     dependencies: [],
-    cache: moduleCache
+    cache: moduleCache,
+    pathMap: pathMap,
+    pathCache: pathCache
   };
   depTree.dependencies = getDependencies(entry);
   parseTreeDeps(depTree.dependencies, entry);
