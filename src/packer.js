@@ -1,5 +1,7 @@
 const path = require('path');
-const { transformFromAst } = require("babel-core");
+const {
+  transformFromAst
+} = require("babel-core");
 const babelTraverse = require("babel-traverse");
 const jsxPlugin = require('@syr/jsx');
 const t = require('@babel/types');
@@ -18,24 +20,24 @@ function buildModuleMap(depTree, entryPath) {
   let requireMap = {};
   let modules = [];
 
-  for(let i = 0; i < paths.length; i++) {
+  for (let i = 0; i < paths.length; i++) {
     let modulePath = paths[i];
     pathCache[modulePath] = (modules.push(pathCache[modulePath].ast) - 1)
   }
 
 
   let requirePaths = Object.keys(pathMap);
-  for(let i = 0; i < requirePaths.length; i++) {
+  for (let i = 0; i < requirePaths.length; i++) {
     let requirePath = requirePaths[i];
     let absolutePath = pathMap[requirePaths[i]];
     let moduleIndex = pathCache[absolutePath];
-    let mapPath = i < 1 ?entryPath:requirePath;
+    let mapPath = i < 1 ? entryPath : requirePath;
     requireMap[mapPath] = moduleIndex;
   }
 
 
   let moduleArrayString = '[';
-  for(let i = 0; i < modules.length; i++) {
+  for (let i = 0; i < modules.length; i++) {
     // traverse the ast, looking for imports to gather again
 
     // replace the import path, with the number index of the script
@@ -66,9 +68,21 @@ function buildModuleMap(depTree, entryPath) {
 function transform(ast) {
   let returnBody;
   try {
-    let { code } = transformFromAst(ast, null, {
-      presets: [["env", { "loose": true, "browsers": [">0.25%", "not dead"] }]],
-      plugins: [ [jsxPlugin.default, { "useVariables": true, "useGuid":true }] ],
+    let {
+      code
+    } = transformFromAst(ast, null, {
+      presets: [
+        ["env", {
+          "loose": true,
+          "browsers": [">0.25%", "not dead"]
+        }]
+      ],
+      plugins: [
+        [jsxPlugin.default, {
+          "useVariables": true,
+          "useGuid": true
+        }]
+      ],
       // minified: true,
       // comments: false
     });
