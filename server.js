@@ -12,7 +12,8 @@ module.exports = {
           body, html{
             margin:0;
             padding:0;
-            font-family:arial
+            font-family:arial;
+            overflow:hidden;
           }
         </style>
       </head>

@@ -9,7 +9,7 @@ describe('gather entry', function() {
       const gathered = gatherer(fixturePath);
       assert.equal(gathered.filePath, fixturePath);
       assert.equal(gathered.dependencies instanceof Array, true);
-      assert.equal(gathered.cache.mainFileEntry.type, 'File')
+      assert.equal(gathered.cache.mainFileEntry.ast.type, 'File')
     });
   });
 
@@ -19,6 +19,15 @@ describe('gather entry', function() {
       const gathered = gatherer(fixturePath);
       const dependency = gathered.dependencies[0];
       assert.equal(dependency.file, './index2');
+    });
+  });
+
+  describe('same import name', function() {
+    it('should return a cache with 4(four) files', function() {
+      const fixturePath = path.join(__dirname,'./fixtures/same-import-name');
+      const gathered = gatherer(fixturePath);
+      console.log(gathered);
+      assert.equal(Object.keys(gathered.cache).length, 4);
     });
   });
 });
