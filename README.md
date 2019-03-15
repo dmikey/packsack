@@ -1,6 +1,6 @@
 # syr-pack
 
-Small packer, for Syr applications.
+Small packer, for ESNext apps, specifically geared toward building Syr apps fast, and reliably.
 
 ## install
 
@@ -16,12 +16,12 @@ then use it
 syr-pack infile outfile
 ```
 
-
 ## Built in support for
 
 * JSON
-* `@syr/jsx`
-* ES6 to @syr/core targets for iOS and Android
+* Syr JSX Transform
+* ES6 to Syr Core targets
+* Simple Deduping
 
 ## requirements
 

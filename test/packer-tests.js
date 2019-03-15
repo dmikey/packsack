@@ -16,7 +16,7 @@ const packerOpts = {
   plugins: [
     [jsxPlugin.default, {
       "useVariables": true,
-      "useGuid": true
+      "useGuid": false
     }]
   ]
 };
@@ -51,6 +51,14 @@ describe('basic packer tests', function () {
     const gathered = gatherer(fixturePath);
     const packed = packer(gathered, packerOpts);
     const outputFixture = fs.readFileSync(path.join(__dirname, './fixtures/json-test/out.js'), "utf-8");
+    assert.equal(outputFixture, packed);
+  });
+
+  it('should pack the jsx example', function () {
+    const fixturePath = path.join(__dirname, './fixtures/jsx-test');
+    const gathered = gatherer(fixturePath);
+    const packed = packer(gathered, packerOpts);
+    const outputFixture = fs.readFileSync(path.join(__dirname, './fixtures/jsx-test/out.js'), "utf-8");
     assert.equal(outputFixture, packed);
   });
 });

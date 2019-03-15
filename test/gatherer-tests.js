@@ -29,16 +29,7 @@ const jsonloader = require('../src/jsonloader');
 
     it('should return a cache with a json file in the pathCache', function() {
       const fixturePath = path.join(__dirname,'./fixtures/json-test');
-      const gathered = gatherer(fixturePath, {
-        loaders: [
-          {
-            test: entryPath => {
-              return (entryPath.indexOf('.json') > -1)
-            },
-            load: jsonloader
-          }
-        ]
-      });
+      const gathered = gatherer(fixturePath);
 
       const jsonFixturePath = path.join(__dirname,'./fixtures/json-test/test.json');
       assert.equal(typeof gathered.pathCache[jsonFixturePath], 'object');
