@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@babel/parser": "^7.3.4",
+    "@babel/types": "^7.3.4",
     "@syr/jsx": "^1.2.1",
     "babel-core": "^6.26.3",
     "babel-traverse": "^6.26.0",
