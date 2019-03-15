@@ -3,13 +3,23 @@ const path = require('path')
 const babelParser = require("@babel/parser");
 const babelTraverse = require("babel-traverse");
 const t = require('@babel/types');
+const jsonloader = require('./jsonloader');
 
 // these track things that we're going to gather together
 // grabbing a bunch of information that we'll eventually pass forward
 let resolvedModules;
 let pathCache;
 let moduleCache = [];
-let opts = {};
+let opts = {
+  loaders: [
+    {
+      test: entryPath => {
+        return (entryPath.indexOf('.json') > -1)
+      },
+      load: jsonloader
+    }
+  ]
+};
 
 /**
  * Gathers the deps for a file, in relation to a parent or absolute entry
@@ -87,7 +97,7 @@ function getDependencies(entryFileName, forParent) {
         }
       }
     }
-    
+
     // get ast from the entry file, so we can comb it for deps
     let ast = parseToAST(entryData);
 
@@ -110,6 +120,7 @@ function getDependencies(entryFileName, forParent) {
           fileLocation: fileLocation,
           requestorPath: filePath
         });
+        node.source = t.stringLiteral(fileLocation);
       }
     });
   } catch (e) {
@@ -157,6 +168,17 @@ function resolveLocation(toLocation, fromLocation) {
     let fromPath = path.parse(fromLocation);
     resolvedPath = path.join(fromPath.dir, toLocation);
   }
+
+  // if there is no js at the file path
+  if (resolvedPath.indexOf('.js') < 0) {
+    let checkPath = `${resolvedPath}/index.js`;
+    // we'll check if it exists as an index.js file under
+    if (!fs.existsSync(path.resolve(`${checkPath}`))) {
+      checkPath = `${resolvedPath}.js`
+    }
+    resolvedPath = checkPath;
+  }
+
   return resolvedPath;
 }
 
@@ -181,11 +203,11 @@ function parseTreeDeps(deps, entry) {
  * @param {string} entry
  */
 module.exports = (entry, _opts) => {
-  opts = _opts;
+  if(_opts) opts = _opts;
   resolvedModules = {};
   pathCache = {};
   moduleCache = [];
-  console.log('gathering modules');
+  // console.log('gathering modules');
 
   const depTree = {
     filePath: entry,
