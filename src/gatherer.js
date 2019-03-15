@@ -6,11 +6,10 @@ const t = require('@babel/types');
 
 // these track things that we're going to gather together
 // grabbing a bunch of information that we'll eventually pass forward
-let moduleCache;
 let resolvedModules;
 let pathCache;
-let pathMap;
-let mmModuleCache = [];
+let moduleCache = [];
+let opts = {};
 
 /**
  * Gathers the deps for a file, in relation to a parent or absolute entry
@@ -75,58 +74,47 @@ function getDependencies(entryFileName, forParent) {
     // when we encounter a file that ends in json
     // lets format it so it exports seamlessly with es6
     // this is really how the webpack plugin works too
-    if (entryFileName.indexOf('json') > -1) {
-      entryData = `export default ${entryData}`;
-    }
 
+    if(opts && opts.loaders) {
+      // check for loader patterns here
+      // currently functions are supported
+      for(let i = 0; i < opts.loaders.length; i++) {
+        if(opts.loaders[i].test(entryFileName)) {
+          entryData = opts.loaders[i].load(entryData);
+          if(typeof entryData == 'undefined') {
+            console.warn('loader is returning nothing: ', entryFileName);
+          }
+        }
+      }
+    }
+    
     // get ast from the entry file, so we can comb it for deps
     let ast = parseToAST(entryData);
 
-    // if we we're passed a parent, then we know we've already started
-    // the crawl. if we didn't have a parent, then it's the top level entry
-    // for this pack
-    if (forParent) {
-      moduleCache[entryFileName] = {
-        ast: ast
-      };
-    } else {
-      moduleCache.mainFileEntry = {
-        ast: ast
-      };
-    }
-
-    // put those entries into a pathMap. Later we need to map a bunch of
-    // this into anonmyzing packages. Otherwise we'll be leaking details about
-    // the user directory, since we pack by absolute path to dedupe.
-    pathMap[entryFileName] = filePath;
-
     if (!pathCache[filePath]) {
+      // cache each absolutely pathed file, so that
+      // we know exactly each crawl.
       pathCache[filePath] = {
-        ast: ast,
-        moduleId: (mmModuleCache.push(ast) - 1)
+        moduleId: (moduleCache.push(ast) - 1)
       };
     }
-
 
     // traverse the ast, looking for imports to gather again
     babelTraverse.default(ast, {
       ImportDeclaration: ({
         node
       }) => {
+        let fileLocation = resolveLocation(node.source.value, filePath);
         dependencies.push({
           file: node.source.value,
-          fileLocation: resolveLocation(node.source.value, filePath),
+          fileLocation: fileLocation,
           requestorPath: filePath
         });
-
-        node.source = t.NumericLiteral(pathCache[filePath].moduleId);
       }
     });
   } catch (e) {
 
-    // things either not existing, or not going through babel (loaders!? lol)
-    // really though, there maybe a reason that you reach this block I've tried to
-    // infer the most likely scenarios so far
+    // things either not existing, or not going through babel
     if (e.message.indexOf('ENOENT') > -1) {
       console.log('file not found >>> ', filePath)
       console.log('requested in ', forParent);
@@ -179,6 +167,7 @@ function parseTreeDeps(deps, entry) {
     return
   }
   resolvedModules[entry] = true;
+
   // loop through and resolve deps
   for (let i = 0; i < deps.length; i++) {
     let subDeps = getDependencies(deps[i].file, entry);
@@ -187,27 +176,26 @@ function parseTreeDeps(deps, entry) {
   }
 }
 
-
 /**
  * Accepts a string location for an entry to start packaging for distrbution
  * @param {string} entry
  */
-module.exports = (entry) => {
-  moduleCache = {};
+module.exports = (entry, _opts) => {
+  opts = _opts;
   resolvedModules = {};
   pathCache = {};
-  pathMap = {};
-  mmModuleCache = [];
+  moduleCache = [];
   console.log('gathering modules');
+
   const depTree = {
     filePath: entry,
     dependencies: [],
-    cache: moduleCache,
-    pathMap: pathMap,
     pathCache: pathCache,
-    mmModuleCache: mmModuleCache
+    cache: moduleCache
   };
+
   depTree.dependencies = getDependencies(entry);
   parseTreeDeps(depTree.dependencies, entry);
+
   return depTree
 }
