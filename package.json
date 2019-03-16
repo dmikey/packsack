@@ -16,6 +16,7 @@
     "@babel/types": "^7.3.4",
     "@syr/jsx": "^1.2.1",
     "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
     "babel-traverse": "^6.26.0",
     "express": "^4.16.4"
   },
