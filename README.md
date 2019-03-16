@@ -1,5 +1,7 @@
 # syr-pack
 
+[![Build Status](https://travis-ci.org/syrjs/pack.svg?branch=master)](https://travis-ci.org/syrjs/pack)
+
 Small packer, for ESNext apps, specifically geared toward building Syr apps fast, and reliably.
 
 ## install
