@@ -4,6 +4,7 @@ const babelParser = require("@babel/parser");
 const babelTraverse = require("babel-traverse");
 const t = require('@babel/types');
 const jsonloader = require('./jsonloader');
+const spudloader = require('./spudloader');
 
 // these track things that we're going to gather together
 // grabbing a bunch of information that we'll eventually pass forward
@@ -17,6 +18,12 @@ let opts = {
         return (entryPath.indexOf('.json') > -1)
       },
       load: jsonloader
+    },
+    {
+      test: entryPath => {
+        return (entryPath.indexOf('.properties') > -1)
+      },
+      load: spudloader
     }
   ]
 };
@@ -60,7 +67,7 @@ function getDependencies(entryFileName, forParent) {
       }
 
       // if there is no js at the file path
-      if (filePath.indexOf('.js') < 0) {
+      if (filePath.indexOf('.js') < 0 && filePath.indexOf('.properties') == -1) {
         let checkPath = `${filePath}/index.js`;
         // we'll check if it exists as an index.js file under
         if (!fs.existsSync(path.resolve(`${parentPath.dir}/${checkPath}`))) {
@@ -170,7 +177,7 @@ function resolveLocation(toLocation, fromLocation) {
   }
 
   // if there is no js at the file path
-  if (resolvedPath.indexOf('.js') < 0) {
+  if (resolvedPath.indexOf('.js') < 0 && resolvedPath.indexOf('properties') == -1) {
     let checkPath = `${resolvedPath}/index.js`;
     // we'll check if it exists as an index.js file under
     if (!fs.existsSync(path.resolve(`${checkPath}`))) {
