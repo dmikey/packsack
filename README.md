@@ -1,19 +1,19 @@
-# syr-pack
+# packsack
 
-[![Build Status](https://travis-ci.org/syrjs/pack.svg?branch=master)](https://travis-ci.org/syrjs/pack)
+[![Build Status](https://travis-ci.org/syrjs/pack.svg?branch=master)](https://travis-ci.org/dmikey/packsack)
 
-Small packer, for ESNext apps, specifically geared toward building Syr apps fast, and reliably.
+Small packer, for ESNext apps, specifically geared toward speed, agility, ease of understanding, and security of your application.
 
 ## install
 
 ```
-npm install @syr/pack
+npm i sackpack -g
 ```
 
 then use it
 
 ```
-syr-pack infile outfile
+psk infile outfile
 ```
 
 ## Built in support for
@@ -22,9 +22,8 @@ syr-pack infile outfile
 * Syr JSX Transform
 * ES6 to Syr Core targets
 * Simple Deduping
-* Spud support
 
 ## requirements
 
-* node 8.9
+* Node 12+
 

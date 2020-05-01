@@ -1,13 +1,13 @@
 {
-  "name": "@syr/pack",
+  "name": "packsack",
   "version": "1.0.0",
-  "description": "pack syr applications, config free, and fast",
+  "description": "pack applications, config free, fast and secure",
   "main": "src/index.js",
   "scripts": {
     "test": "mocha"
   },
   "bin": {
-    "syr-pack": "./cli.js"
+    "psk": "./cli.js"
   },
   "author": "",
   "license": "ISC",

@@ -4,7 +4,6 @@ const babelParser = require("@babel/parser");
 const babelTraverse = require("babel-traverse");
 const t = require('@babel/types');
 const jsonloader = require('./jsonloader');
-const spudloader = require('./spudloader');
 
 // these track things that we're going to gather together
 // grabbing a bunch of information that we'll eventually pass forward
@@ -18,12 +17,6 @@ let opts = {
         return (entryPath.indexOf('.json') > -1)
       },
       load: jsonloader
-    },
-    {
-      test: entryPath => {
-        return (entryPath.indexOf('.properties') > -1)
-      },
-      load: spudloader
     }
   ]
 };
