@@ -1,6 +1,6 @@
 {
   "name": "packsack",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "pack applications, config free, fast and secure",
   "main": "src/index.js",
   "scripts": {
