@@ -2,26 +2,32 @@
 
 [![Build Status](https://travis-ci.org/syrjs/pack.svg?branch=master)](https://travis-ci.org/dmikey/packsack)
 
-Zero config packer, specifically geared toward speed, agility, ease of understanding, and security of your application. 
+Zero config modern web development, specifically geared toward speed, agility, ease of understanding, and security of your application. 
 
 ## install
 
 ```
-npm i packsack -g
+npm i packsack
 ```
 
 then use it
 
 ```
-psk infile outfile
+npx psk infile outfolder
 ```
 
-## Built in support for
+or include in package.json scripts
 
-* JSON
-* Syr JSX Transform
-* ES6 to Syr Core targets
-* Simple Deduping
+```
+"scripts": {
+    "build": "psk src/index.js dist"
+}
+```
+
+## features
+
+zero config jsx, es6
+build time error checking
 
 ## requirements
 

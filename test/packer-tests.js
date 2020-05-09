@@ -61,14 +61,6 @@ describe('basic packer tests', function () {
     const outputFixture = fs.readFileSync(path.join(__dirname, './fixtures/jsx-test/out.js'), "utf-8");
     assert.equal(outputFixture, packed);
   });
-
-  it('should pack the spud example', function () {
-    const fixturePath = path.join(__dirname, './fixtures/spud-test');
-    const gathered = gatherer(fixturePath);
-    const packed = packer(gathered, packerOpts);
-    const outputFixture = fs.readFileSync(path.join(__dirname, './fixtures/spud-test/out.js'), "utf-8");
-    assert.equal(outputFixture, packed);
-  });
 });
 
 

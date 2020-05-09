@@ -4,6 +4,7 @@ const babelParser = require("@babel/parser");
 const babelTraverse = require("babel-traverse");
 const t = require('@babel/types');
 const jsonloader = require('./jsonloader');
+const chalk = require('chalk');
 
 // these track things that we're going to gather together
 // grabbing a bunch of information that we'll eventually pass forward
@@ -130,8 +131,10 @@ function getDependencies(entryFileName, forParent) {
       console.log('file not found >>> ', filePath)
       console.log('requested in ', forParent);
     } else if (e.message.indexOf('Unexpected token') > -1) {
-      console.log('no loader for file specified >>> ', filePath)
-      console.log('requested in ', forParent);
+      console.log(chalk.red('error loading file >>> '), filePath);
+      console.log(chalk.blue('requested in '), forParent);
+      console.log(chalk.yellow(e.message));
+      console.log();
     } else {
       console.log(e.message)
     }
