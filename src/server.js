@@ -4,6 +4,8 @@ const app = express();
 const chalk = require('chalk');
 var reload = require('reload');
 const port = 3000
+const polltime = 1000
+
 let chunk;
 let _bundle;
 let _entry;
@@ -26,20 +28,21 @@ const buildPage = (script) => {
     <head>
       <script>
         const fn = function(){
-          fetch('http://localhost:3000/__packsack__')
+          fetch('http://localhost:${port}/__packsack__')
             .then(response => response.json())
             .then(data => {
               if(!data.update) {
-                setTimeout(fn, 1000);
+                setTimeout(fn, ${polltime});
               } else {
                 location.reload();
               }
             });
         };
-        setTimeout(fn, 1000);
+        setTimeout(fn, ${polltime});
       </script>
     </head>
     <body>
+      <div id="app"></div>
       <script>${script}</script>
     </body>
     </html>

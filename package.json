@@ -6,6 +6,9 @@
   "scripts": {
     "test": "mocha"
   },
+  "exports": {
+    "./": "./lib/"
+  },
   "bin": {
     "psk": "./cli.js"
   },
