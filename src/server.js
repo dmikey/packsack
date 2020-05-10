@@ -26,6 +26,9 @@ const buildPage = (script) => {
     <!doctype html>
     <html>
     <head>
+      <style>
+        html, body {background:#000}
+      </style>
       <script>
         const fn = function(){
           fetch('http://localhost:${port}/__packsack__')
@@ -59,6 +62,6 @@ module.exports = {
       res.send(buildPage(chunk));
     });
     app.get('/__packsack__', (req, res) => res.send(JSON.stringify(updateStatus)));
-    app.listen(port, () => console.log(`${chalk.green('[info]')} development server listening on ${port}!`))
+    app.listen(port, () => console.log(`${chalk.green('[info]')} development server listening on ${port}! ctrl+c to exit.`))
   }
 }
