@@ -3,7 +3,7 @@ const path = require('path')
 const babelParser = require("@babel/parser");
 const babelTraverse = require("babel-traverse");
 const t = require('@babel/types');
-const jsonloader = require('./jsonloader');
+const jsonloader = require('./internal-loaders/jsonloader');
 const chalk = require('chalk');
 
 // these track things that we're going to gather together

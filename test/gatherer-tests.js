@@ -1,7 +1,7 @@
 const assert = require('assert');
 const gatherer = require('../src/gatherer');
 const path = require('path');
-const jsonloader = require('../src/jsonloader');
+const jsonloader = require('../src/internal-loaders/jsonloader');
 
   describe('basic gather tests', function() {
     it('should return a dependency tree with main entry no deps', function() {
