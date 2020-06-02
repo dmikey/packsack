@@ -30,6 +30,6 @@
     "node": ">=8.9"
   },
   "devDependencies": {
-    "mocha": "^6.0.2"
+    "mocha": "^6"
   }
 }
